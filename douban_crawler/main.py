@@ -5,9 +5,11 @@ from lxml import etree
 import csv
 import time
 import os
+from numpy import size
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'}
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/83.0.4103.116 Safari/537.36'}
 
 
 # 爬取豆瓣top250主界面每个电影页面的url
@@ -32,39 +34,43 @@ def parse_pages(url):
 
         # 又名
         value = re.findall('<span class="pl">又名:</span>(.*?)<br/>', movie_pages.text)
-        other_name = [" ".join(['又名:'] + value)]
+        other_name = ["/".join(value)]
 
         # 导演
         value = parse_movie.xpath("//div[@id='info']/span[1]/span[@class='attrs']/a/text()")
-        director = [" ".join(['导演:'] + value)]
+        director = ["/".join(value)]
 
         # 编剧
         value = parse_movie.xpath("//div[@id='info']/span[2]/span[@class='attrs']/a/text()")
-        screenwriters = [" ".join(['编剧:'] + value)]
+        screenwriters = ["/".join(value)]
 
         # 主演
-        value = parse_movie.xpath("//div[@id='info']/span[3]")
-        performers = [value[0].xpath('string(.)')]
+        value = parse_movie.xpath("//div[@id='info']/span[3]/span[@class='attrs']/a/text()")
+        performers = ["/".join(value)]
 
         # 类型
         value = parse_movie.xpath("//span[@property='v:genre']/text()")
-        types = [" ".join(['类型：'] + value)]
+        types = ["/".join(value)]
 
         # 语言
         value = re.findall('<span class="pl">语言:</span>(.*?)<br/>', movie_pages.text)
-        language = [" ".join(['语言:'] + value)]
+        language = ["/".join(value)]
 
         # 片长
         value = parse_movie.xpath("//span[@property='v:runtime']/text()")
-        time = [" ".join(['片长：'] + value)]
+        time = ["/".join(value)]
 
         # 上映日期
         value = parse_movie.xpath("//span[@property='v:initialReleaseDate']/text()")
-        date = [" ".join(['上映日期：'] + value)]
+        date = ["/".join(value)]
 
         # 制片国家/地区
         value = re.findall('<span class="pl">制片国家/地区:</span>(.*?)<br/>', movie_pages.text)
-        country = [" ".join(['制片国家:'] + value)]
+        country = ["/".join(value)]
+
+        # 简介
+        value = parse_movie.xpath("//span[@property='v:summary']/text()")
+        intro = ["/".join(value)]
 
         poster = parse_movie.xpath("//div[@id='mainpic']/a/img/@src")
         response = requests.get(poster[0])
@@ -78,18 +84,21 @@ def parse_pages(url):
             f.write(response.content)
         # str转换成list，不转换存的数据只有字符串的第一个字符
         movie_name = [m_name]
-        return zip(movie_name, other_name, director, screenwriters, performers, types, language, time, date, country)
+        return zip(movie_name, other_name, director, screenwriters, performers, types, language, time, date, country, intro)
     except:
         pass
 
 
 def save_results(data):
-    with open('movie.csv', 'a', encoding="utf-8-sig") as fp:
-        writer = csv.writer(fp)
-        writer.writerow(data)
+    with open('movie.csv', 'a', encoding="utf-8-sig", newline='') as fp2:
+        writer2 = csv.writer(fp2)
+        writer2.writerow(data)
 
 
 if __name__ == '__main__':
+    with open('movie.csv', 'a', encoding="utf-8-sig", newline='') as fp1:
+        writer1 = csv.writer(fp1)
+        writer1.writerow(['电影名', '又名', '导演', '编剧', '主演', '类型', '语言', '片长', '上映日期', '制片国家', '简介'])
     num = 0
     for i in range(0, 250, 25):
         movie_urls = index_pages(i)
