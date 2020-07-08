@@ -7,7 +7,7 @@
 </head>
 <body>
     <ul th:each="movie:${movies}">
-        <li><img th:name="${movie.getType()}" th:src="${movie.getUrl()}" /></li>
+        <li><img th:name="${movie.getMovie_name()}" th:src="@{'movie_poster/' + ${movie.getMovie_name()} + '.jpg'}" /></li>
     </ul>
     <!--<div th:each="movie:${movies}">-->
         <!--<span th:text="${movie.getName()}"></span>-->
