@@ -1,23 +1,22 @@
 package com.crawler.nw.mapper;
 
 import com.crawler.nw.bean.Movie;
-import com.crawler.nw.bean.User;
 import org.apache.ibatis.annotations.*;
 
 public interface MovieMapper {
-    @Select("select * from Movie where Moviename=#{Moviename}")
-    public Movie getMovieByName(String Moviename);
+    @Select("select * from movie where Movie_name=#{Movie_name}")
+    public Movie getMovieByName(String Movie_name);
 
-    @Select("select * from Movie where Movieid=#{Movieid}")
-    public Movie getMovieById(int Movieid);
+    @Select("select * from movie where Movie_id=#{Movie_id}")
+    public Movie getMovieById(int Movie_id);
 
-    @Select("select * from Movie")
+    @Select("select * from movie")
     public Movie[] getMovies();
 
-    @Delete("delete from Movie where Moviename=#{Moviename}")
-    public int deleteMovieByName(String Moviename);
+    @Delete("delete from movie where Movie_name=#{Movie_name}")
+    public int deleteMovieByName(String Movie_name);
 
-    @Options(useGeneratedKeys = true,keyProperty = "Movieid")
-    @Insert("insert into Movie(Moviename, Movietype, Moviescore, Moviedescription, Movieurl) values(#{Moviename}, #{Movietype}, #{Moviescore}, #{Moviedescription}, #{Movieurl})")
-    public int insertUser(Movie movie);
+//    @Options(useGeneratedKeys = true,keyProperty = "Movie_id")
+//    @Insert("insert into movie(Movie_id, Movietype, Moviescore, Moviedescription, Movieurl) values(#{Moviename}, #{Movietype}, #{Moviescore}, #{Moviedescription}, #{Movieurl})")
+//    public int insertMovie(Movie movie);
 }
