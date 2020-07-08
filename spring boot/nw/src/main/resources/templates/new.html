@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新用户</title>
+    <link rel="stylesheet" href="asserts/css/style.css" media="screen" type="text/css" />
+</head>
+<body>
+    <ul th:each="movie:${movies}">
+        <li><img th:name="${movie.getType()}" th:src="${movie.getUrl()}" /></li>
+    </ul>
+    <!--<div th:each="movie:${movies}">-->
+        <!--<span th:text="${movie.getName()}"></span>-->
+        <!--<span th:text="${movie.getScore()}"></span>-->
+        <!--<span th:text="${movie.getDescription()}"></span>-->
+        <!--<span th:text="${movie.getUrl()}"></span>-->
+    <!--</div>-->
+</body>
+<script src="asserts/js/jquery.js"></script>
+<script src="asserts/js/selectLike.js"></script>
+</html>
