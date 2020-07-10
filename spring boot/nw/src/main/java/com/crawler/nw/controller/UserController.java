@@ -1,0 +1,70 @@
+package com.crawler.nw.controller;
+
+import com.crawler.nw.bean.User;
+
+import com.crawler.nw.mapper.MovieMapper;
+import com.crawler.nw.mapper.UserMapper;
+import com.crawler.nw.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
+
+
+@Controller
+public class UserController {
+    @Autowired
+    UserService userservice;
+
+    @GetMapping("/")
+    public String index() {
+        return "login";
+    }
+
+    @GetMapping("/reg")
+    public String register(){
+        return "register";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String index(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model, RedirectAttributes attributes) {
+        User u = userservice.getUserByName(username);
+        //System.out.println(u.getUsername());
+        try {
+            if(u.getPassword().equals(password)){
+                session.setAttribute("loginUser",username);
+                if(u.getLike() == null){
+                    attributes.addAttribute("userid", u.getUserid());
+                    return "redirect:/new";
+                }else{
+                    attributes.addAttribute("userid", u.getUserid());
+                    return "redirect:/index";
+                }
+            }else{
+                model.addAttribute("msg", "密码错误，登陆失败");
+                return "login";
+            }
+        }catch(NullPointerException e){
+            model.addAttribute("msg", "用户名不存在，登录失败");
+            return "login";
+        }
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String reg_insert(@RequestParam("username") String username, @RequestParam("password") String password, Model model, RedirectAttributes attributes) {
+        User u1 = userservice.getUserByName(username);
+        if(u1 != null){
+            model.addAttribute("msg", "账户已存在,重新输入");
+            return "register";
+        }
+        else{
+            User u2 = new User(username, password);
+            userservice.insertUser(u2);
+            return "redirect:/";
+        }
+    }
+
+}
