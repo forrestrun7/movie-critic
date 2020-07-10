@@ -7,6 +7,9 @@ public interface UserMapper {
     @Select("select * from User where Username=#{Username}")
     public User getUserByName(String Username);
 
+    @Select("select * from User where Userid=#{Userid}")
+    public User getUserById(int id);
+
     @Delete("delete from User where Userid=#{Userid}")
     public int deleteUserById(Integer id);
 

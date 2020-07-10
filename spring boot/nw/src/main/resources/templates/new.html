@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="asserts/css/style.css" media="screen" type="text/css" />
 </head>
 <body>
-    <ul th:each="movie:${movies}">
-        <li><img th:name="${movie.getMovie_name()}" th:src="@{'movie_poster/' + ${movie.getMovie_name()} + '.jpg'}" /></li>
+    <ul id="box" th:each="movie:${movies}">
+        <li th:name="${movie.getMovie_id()}"><img th:src="@{'movie_poster/' + ${movie.getMovie_name()} + '.jpg'}" /></li>
     </ul>
     <!--<div th:each="movie:${movies}">-->
         <!--<span th:text="${movie.getName()}"></span>-->
@@ -15,7 +15,55 @@
         <!--<span th:text="${movie.getDescription()}"></span>-->
         <!--<span th:text="${movie.getUrl()}"></span>-->
     <!--</div>-->
+    <form action="" th:action="@{/index}" method="post">
+        <input type="hidden" id="likes" name="likes">
+        <input type="hidden" id="userid" name="userid" th:value="${userid}">
+        <button id="scroll" type="submit" onclick="like_array()">选择完成</button>
+    </form>
 </body>
 <script src="asserts/js/jquery.js"></script>
-<script src="asserts/js/selectLike.js"></script>
+<script>
+    //获取window对象
+    var $window = $(window);
+
+    //获取浏览器滚动条所在位置距离最上方的距离
+    var window_top = $window.scrollTop();
+    //设置一个你想要距离浏览器上方的值
+    var header_top = 35;
+    //设置定位
+    $("#scroll").css({"position":"absolute","top":window_top+header_top});
+    //绑定事件，每次浏览器条滚动，则跟着改变位置
+    $(function(){
+        $window.scroll(function() {
+            var window_top = $window.scrollTop();
+            var header_top = 35;
+            $("#scroll").css({"position":"absolute","top":window_top+header_top});
+        });
+    });
+</script>
+<script>
+    var stringRes = "";
+    var movie_count = [[${count}]];
+    var list_map = new Array(movie_count);
+    for(var i = 0; i < movie_count; i++){
+        Array[i] = 0;
+    }
+    $('li').click(function () {
+        $(this).toggleClass('selected');
+        if ($(this).hasClass('selected')){
+            list_map[$(this).attr("name")] = 1;
+        }else{
+            list_map[$(this).attr("name")] = 0;
+        }
+    });
+    function like_array() {
+        for(var i = 0; i < list_map.length; i++){
+            if(list_map[i] == 1){
+                stringRes += (i + ",");
+            }
+        }
+        $("#likes").attr({"value": stringRes});
+        console.log("结果串：" + stringRes);
+    }
+</script>
 </html>
