@@ -4,13 +4,15 @@ import com.crawler.nw.bean.Movie;
 import com.crawler.nw.bean.User;
 import com.crawler.nw.mapper.MovieMapper;
 import com.crawler.nw.mapper.UserMapper;
+import com.crawler.nw.service.MovieService;
+import com.crawler.nw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import java.util.Random;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +22,9 @@ import java.util.Set;
 public class IndexConroller {
 
     @Autowired
-    UserMapper userMapper;
+    UserService userservice;
     @Autowired
-    MovieMapper movieMapper;
+    MovieService movieService;
 
     @RequestMapping("/index")
     public String index(@RequestParam(value = "likes", required = false) String likes, @RequestParam("userid") int userid, Model model){
@@ -31,7 +33,7 @@ public class IndexConroller {
             String[] l = likes.split(",");
             String L = "";
             for(int i = 0; i < l.length; i++){
-                Movie m = movieMapper.getMovieById(Integer.parseInt(l[i]));
+                Movie m = movieService.getMovieById(Integer.parseInt(l[i]));
                 L += (m.getMovie_type() + "/");
             }
             String[] Likes = L.split("/");
@@ -46,23 +48,30 @@ public class IndexConroller {
                     res = res + Likes[i];
                 }
             }
-            User u =userMapper.getUserById(userid);
+            User u =userservice.getUserById(userid);
             u.setLike(res);
-            userMapper.updateUserLike(u);
+            userservice.updateUserLike(u);
             model.addAttribute("userid", userid);
         }else{
-            User u =userMapper.getUserById(userid);
+            User u =userservice.getUserById(userid);
             model.addAttribute("userid", userid);
         }
+        // 获取主页展示的电影
+        Movie[] Index_movie=new Movie[9];
+        for(int i=0; i<9;i++){
+            Random random = new Random();
+            Index_movie[i] = movieService.getMovieById(random.nextInt(248)+1);
+        }
+        model.addAttribute("index_movies", Index_movie);
         return "index";
 
     }
     @GetMapping("/new")
     public String newuser(@RequestParam("userid") int userid, Model model){
-        Movie movie[] = movieMapper.getMovies();
+        Movie movie[] = movieService.getMovies();
         model.addAttribute("userid", userid);
         model.addAttribute("movies", movie);
-        model.addAttribute("count", movieMapper.getMoviesCount());
+        model.addAttribute("count", movieService.getMoviesCount());
         return "new";
     }
 }
