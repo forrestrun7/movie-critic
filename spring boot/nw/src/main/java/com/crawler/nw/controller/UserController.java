@@ -5,12 +5,16 @@ import com.crawler.nw.bean.User;
 import com.crawler.nw.mapper.MovieMapper;
 import com.crawler.nw.mapper.UserMapper;
 import com.crawler.nw.service.UserService;
+import com.sun.deploy.net.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.resource.HttpResource;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
@@ -30,17 +34,23 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String index(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model, RedirectAttributes attributes) {
+    public String index(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model, HttpServletResponse response) {
         User u = userservice.getUserByName(username);
         //System.out.println(u.getUsername());
         try {
             if(u.getPassword().equals(password)){
+                // 创建Cookie
+                Cookie login_cookie = new Cookie("userid", (new Integer(u.getUserid())).toString());
+                // 有效期,秒为单位
+                login_cookie.setMaxAge(3600);
+                response.addCookie(login_cookie);
                 session.setAttribute("loginUser",username);
-                if(u.getLike() == null){
-                    attributes.addAttribute("userid", u.getUserid());
+                if(u.getLike().isEmpty()){
                     return "redirect:/new";
                 }else{
-                    attributes.addAttribute("userid", u.getUserid());
+//                    Cookie like_cookie = new Cookie("likes", u.getLike());
+//                    like_cookie.setMaxAge(3600);
+//                    response.addCookie(like_cookie);
                     return "redirect:/index";
                 }
             }else{
@@ -54,7 +64,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String reg_insert(@RequestParam("username") String username, @RequestParam("password") String password, Model model, RedirectAttributes attributes) {
+    public String reg_insert(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
         User u1 = userservice.getUserByName(username);
         if(u1 != null){
             model.addAttribute("msg", "账户已存在,重新输入");

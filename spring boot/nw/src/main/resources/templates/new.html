@@ -17,7 +17,6 @@
     <!--</div>-->
     <form action="" th:action="@{/index}" method="post">
         <input type="hidden" id="likes" name="likes">
-        <input type="hidden" id="userid" name="userid" th:value="${userid}">
         <button id="scroll" type="submit" onclick="like_array()">选择完成</button>
     </form>
 </body>
@@ -63,7 +62,7 @@
             }
         }
         $("#likes").attr({"value": stringRes});
-        console.log("结果串：" + stringRes);
+        // console.log("结果串：" + stringRes);
     }
 </script>
 </html>

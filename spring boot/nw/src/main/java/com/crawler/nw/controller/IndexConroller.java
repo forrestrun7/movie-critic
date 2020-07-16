@@ -5,73 +5,88 @@ import com.crawler.nw.bean.User;
 import com.crawler.nw.mapper.MovieMapper;
 import com.crawler.nw.mapper.UserMapper;
 import com.crawler.nw.service.MovieService;
-import com.crawler.nw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.Random;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Controller
 public class IndexConroller {
 
     @Autowired
-    UserService userservice;
+    UserMapper userMapper;
     @Autowired
     MovieService movieService;
 
     @RequestMapping("/index")
-    public String index(@RequestParam(value = "likes", required = false) String likes, @RequestParam("userid") int userid, Model model){
-        System.out.println(likes + userid);
-        if(likes != null){
-            String[] l = likes.split(",");
-            String L = "";
-            for(int i = 0; i < l.length; i++){
-                Movie m = movieService.getMovieById(Integer.parseInt(l[i]));
-                L += (m.getMovie_type() + "/");
-            }
-            String[] Likes = L.split("/");
-            List list1 = Arrays.asList(Likes);
-            Set set = new HashSet(list1);
-            Likes = (String [])set.toArray(new String[0]);
-            String res = "";
-            for(int i = 0; i < Likes.length; i++){
-                if(i != Likes.length - 1){
-                    res = res + Likes[i] + "/";
-                }else{
-                    res = res + Likes[i];
+    public String index(@RequestParam(value = "likes", required = false) String likes, HttpServletRequest request, Model model){
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("userid")){
+                    int userid = Integer.parseInt(cookie.getValue());
+                    //System.out.println(likes + userid);
+                    if(likes != null){ //从new跳转来的新用户
+                        String[] l = likes.split(",");
+                        String L = "";
+                        for(int i = 0; i < l.length; i++){
+                            Movie m = movieService.getMovieById(Integer.parseInt(l[i]));
+                            L += (m.getMovie_type() + "/");
+                        }
+                        String[] Likes = L.split("/");
+                        List list1 = Arrays.asList(Likes);
+                        Set set = new HashSet(list1);
+                        Likes = (String [])set.toArray(new String[0]);
+                        String res = "";
+                        for(int i = 0; i < Likes.length; i++){
+                            if(i != Likes.length - 1){
+                                res = res + Likes[i] + "/";
+                            }else{
+                                res = res + Likes[i];
+                            }
+                        }
+                        User u =userMapper.getUserById(userid);
+                        u.setLike(res);
+                        userMapper.updateUserLike(u);
+                        model.addAttribute("userid", userid);
+                    }else{ //已有喜好的老用户
+                        User u =userMapper.getUserById(userid);
+                        model.addAttribute("userid", userid);
+                    }
+                    // 获取主页展示的电影
+                    Movie[] Index_movie=new Movie[9];
+                    for(int i=0; i<9;i++){
+                        Random random = new Random();
+                        Index_movie[i] = movieService.getMovieById(random.nextInt(248)+1);
+                    }
+                    model.addAttribute("index_movies", Index_movie);
+                    return "index";
                 }
             }
-            User u =userservice.getUserById(userid);
-            u.setLike(res);
-            userservice.updateUserLike(u);
-            model.addAttribute("userid", userid);
-        }else{
-            User u =userservice.getUserById(userid);
-            model.addAttribute("userid", userid);
         }
-        // 获取主页展示的电影
-        Movie[] Index_movie=new Movie[9];
-        for(int i=0; i<9;i++){
-            Random random = new Random();
-            Index_movie[i] = movieService.getMovieById(random.nextInt(248)+1);
-        }
-        model.addAttribute("index_movies", Index_movie);
-        return "index";
-
+        return "redirect:/";
     }
     @GetMapping("/new")
-    public String newuser(@RequestParam("userid") int userid, Model model){
-        Movie movie[] = movieService.getMovies();
-        model.addAttribute("userid", userid);
-        model.addAttribute("movies", movie);
-        model.addAttribute("count", movieService.getMoviesCount());
-        return "new";
+    public String newuser(HttpServletRequest request, Model model){
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("userid")){
+                    int userid = Integer.parseInt(cookie.getValue());
+                    Movie movie[] = movieService.getMovies();
+                    model.addAttribute("userid", userid);
+                    model.addAttribute("movies", movie);
+                    model.addAttribute("count", movieService.getMoviesCount());
+                    return "new";
+                }
+            }
+        }
+        return "redirect:/";
     }
 }
