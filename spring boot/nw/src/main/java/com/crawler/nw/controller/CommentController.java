@@ -1,13 +1,18 @@
 package com.crawler.nw.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.crawler.nw.bean.Comment;
 import com.crawler.nw.service.CommentService;
+import com.crawler.nw.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @EnableAutoConfiguration
@@ -32,7 +37,13 @@ public class CommentController {
     }
 
     @PostMapping(value = "/getcomment")
-    public Comment[] getComment(@RequestParam("movie_id") int movie_id){
-        return commentService.getComments(movie_id);
+    public Response getComment(@RequestParam("movie_id") int movie_id){
+        List<Comment> comments = Arrays.asList( commentService.getComments(movie_id));
+        if(comments.size()>0){
+            //System.out.println(JSONArray.toJSONString(comments));
+            return new Response("0", JSONArray.toJSONString(comments));
+        }else{
+            return new Response("0", "没有留言");
+        }
     }
 }

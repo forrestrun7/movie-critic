@@ -22,6 +22,7 @@
     <textarea id="comment"></textarea>
     <button id="commit" onclick="pushComment()">提交</button>
 </div>
+<div id="wordArea"></div>
 
 </body>
 <script th:src="@{/asserts/js/jquery.js}"></script>
@@ -37,7 +38,16 @@
             data : {"movie_id": movie_id},
             success : function(result) {
                 data = result;
-                alert(data);
+                //console.log(data);
+                if(data.status == "0"){
+                    var comments = eval(data.content);
+                    var html = "";
+                    for(var i in comments){
+                        //console.log(comments[i].user_nickname + ":" + comments[i].comment);
+                        html += '<h2 class="s-margin-2"><small>' + comments[i].user_nickname + '</small></h2>' +  '<hr>' +  '<h5>' + comments[i].comment + '</h5>';
+                    }
+                    document.getElementById("wordArea").innerHTML = html;
+                }
             },
             error : function(result) {
                 alert('服务器异常');

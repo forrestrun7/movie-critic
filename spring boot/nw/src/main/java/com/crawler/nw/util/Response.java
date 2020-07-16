@@ -1,6 +1,11 @@
 package com.crawler.nw.util;
 
 public class Response {
-    private String status;
-    private Object content;
+    public String status;
+    public Object content;
+
+    public Response(String status, Object content){
+        this.status = status;
+        this.content = content;
+    }
 }
