@@ -6,115 +6,67 @@
     <link rel="stylesheet" href="asserts/css/style.css" media="screen" type="text/css" />
 </head>
 <body>
-    <ul id="box" th:each="movie:${movies}">
-        <li th:name="${movie.getMovie_id()}"><img th:src="@{'movie_poster/' + ${movie.getMovie_name()} + '.jpg'}" /></li>
+    <ul id="moviebox">
+        <li th:each="movie:${movies}" th:name="${movie.getMovie_id()}" onclick="li_click(this)"><img th:src="@{'movie_poster/' + ${movie.getMovie_name()} + '.jpg'}" /></li>
     </ul>
-    <!--<div th:each="movie:${movies}">-->
-        <!--<span th:text="${movie.getName()}"></span>-->
-        <!--<span th:text="${movie.getScore()}"></span>-->
-        <!--<span th:text="${movie.getDescription()}"></span>-->
-        <!--<span th:text="${movie.getUrl()}"></span>-->
-    <!--</div>-->
-    <form action="" th:action="@{/index}" method="post">
-        <input type="hidden" id="likes" name="likes">
-        <button id="scroll" type="submit" onclick="like_array()">选择完成</button>
-    </form>
+    <button onclick="updatelikes()">选择完成</button>
+    <button onclick="change_movies()">换一换</button>
 </body>
 <script src="asserts/js/jquery.js"></script>
-<script>
-    //获取window对象
-    var $window = $(window);
-
-    //获取浏览器滚动条所在位置距离最上方的距离
-    var window_top = $window.scrollTop();
-    //设置一个你想要距离浏览器上方的值
-    var header_top = 35;
-    //设置定位
-    $("#scroll").css({"position":"absolute","top":window_top+header_top});
-    //绑定事件，每次浏览器条滚动，则跟着改变位置
-    $(function(){
-        $window.scroll(function() {
-            var window_top = $window.scrollTop();
-            var header_top = 35;
-            $("#scroll").css({"position":"absolute","top":window_top+header_top});
-        });
-    });
-</script>
-<!--<script type="application/javascript">-->
-    <!--initComments();-->
-    <!--function initComments() {-->
-        <!--var movie_id = [[${movie_id}]];-->
-        <!--var data;-->
-        <!--$.ajax({-->
-            <!--async : false,-->
-            <!--type : 'POST',-->
-            <!--url : "http://localhost:8080/getcomment",-->
-            <!--data : {"movie_id": movie_id},-->
-            <!--success : function(result) {-->
-                <!--data = result;-->
-                <!--//console.log(data);-->
-                <!--if(data.status == "0"){-->
-                    <!--var comments = eval(data.content);-->
-                    <!--var html = "";-->
-                    <!--for(var i in comments){-->
-                        <!--//console.log(comments[i].user_nickname + ":" + comments[i].comment);-->
-                        <!--html += '<h2 class="s-margin-2"><small>' + comments[i].user_nickname + '</small></h2>' +  '<hr>' +  '<h5>' + comments[i].comment + '</h5>';-->
-                    <!--}-->
-                    <!--document.getElementById("wordArea").innerHTML = html;-->
-                <!--}else{-->
-                    <!--var html = "";-->
-                    <!--html += '<h2 class="s-margin-2"><small>暂无评论</small></h2>';-->
-                    <!--document.getElementById("wordArea").innerHTML = html;-->
-                <!--}-->
-            <!--},-->
-            <!--error : function(result) {-->
-                <!--alert('服务器异常');-->
-            <!--}-->
-        <!--});-->
-    <!--}-->
-
-    <!--function change_movies() {-->
-        <!--var word = {};-->
-        <!--word.user_id = [[${userid}]];-->
-        <!--word.comment = document.getElementById("comment").value;-->
-        <!--word.movie_id = [[${movie_id}]];-->
-        <!--$.ajax({-->
-            <!--async : false,-->
-            <!--type : 'POST',-->
-            <!--url : "http://localhost:8080/updatecomment",-->
-            <!--data : word,-->
-            <!--success : function(result) {-->
-                <!--alert('发送成功');-->
-            <!--},-->
-            <!--error : function(result) {-->
-                <!--alert('服务器异常');-->
-            <!--}-->
-        <!--});-->
-    <!--}-->
-<!--</script>-->
-<script>
+<script type="application/javascript">
     var stringRes = "";
-    var movie_count = 9;
-    var list_map = new Array(movie_count);
-    for(var i = 0; i < movie_count; i++){
-        Array[i] = 0;
-    }
-    $('li').click(function () {
-        $(this).toggleClass('selected');
-        if ($(this).hasClass('selected')){
-            list_map[$(this).attr("name")] = 1;
+    var list_map = new Array(9);
+    function li_click(obj) {
+        $(obj).toggleClass('selected');
+        if ($(obj).hasClass('selected')){
+            list_map[$(obj).attr("name")] = 1;
         }else{
-            list_map[$(this).attr("name")] = 0;
+            list_map[$(obj).attr("name")] = 0;
         }
-    });
-    function like_array() {
+    };
+    function updatelikes() { //上传兴趣类
         for(var i = 0; i < list_map.length; i++){
             if(list_map[i] == 1){
                 stringRes += (i + ",");
             }
         }
-        $("#likes").attr({"value": stringRes});
-        // console.log("结果串：" + stringRes);
+        var likes = {};
+        likes.likes = stringRes;
+        likes.userid = [[${userid}]];
+        $.ajax({
+            async : false,
+            type : 'POST',
+            url : "http://localhost:8080/updatelikes",
+            data : likes,
+            success : function(result) {
+                alert('上传成功');
+            },
+            error : function(result) {
+                alert('服务器异常');
+            }
+        });
+        window.location.href="http://localhost:8080/index";
+    }
+
+    function change_movies() { //换一换
+        $.ajax({
+            async : false,
+            type : 'POST',
+            url : "http://localhost:8080/change",
+            success : function(result) {
+                var movies = eval(result.content);
+                // console.log(movies);
+                var movie_list = "";
+                for(var i in movies){
+                    movie_list += '<li name=' + movies[i].movie_id + ' onclick=\"li_click(this)\"><img src=\"movie_poster/' + movies[i].movie_name + '.jpg\"/></li>'
+                }
+                document.getElementById("moviebox").innerHTML = movie_list;
+            },
+            error : function(result) {
+                alert('服务器异常');
+            }
+        });
+        list_map = new Array(9);
     }
 </script>
 </html>

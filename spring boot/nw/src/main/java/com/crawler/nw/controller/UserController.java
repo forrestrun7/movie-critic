@@ -45,7 +45,7 @@ public class UserController {
                 login_cookie.setMaxAge(3600);
                 response.addCookie(login_cookie);
                 session.setAttribute("loginUser",username);
-                if(u.getLike().isEmpty()){
+                if(u.getLike() == null || "".equals(u.getLike())){
                     return "redirect:/new";
                 }else{
 //                    Cookie like_cookie = new Cookie("likes", u.getLike());

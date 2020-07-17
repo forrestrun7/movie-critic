@@ -20,7 +20,8 @@ public class UserServiceImp implements UserService{
 
     @Override
     public User getUserById(int id) {
-        return null;
+        User user = userMapper.getUserById(id);
+        return user;
     }
 
     @Override
