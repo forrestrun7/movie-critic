@@ -79,10 +79,15 @@ public class IndexConroller {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("userid")){
                     int userid = Integer.parseInt(cookie.getValue());
-                    Movie movie[] = movieService.getMovies();
+                    int moviecount = movieService.getMoviesCount();
+                    Movie movies[] = new Movie[9];
+                    for(int i = 0; i < 9; i++){
+                        int random = (int)(Math.random() * (moviecount - 1)) + 1;
+                        System.out.println(random);
+                        movies[i] = movieService.getMovieById(random);
+                    }
                     model.addAttribute("userid", userid);
-                    model.addAttribute("movies", movie);
-                    model.addAttribute("count", movieService.getMoviesCount());
+                    model.addAttribute("movies", movies);
                     return "new";
                 }
             }

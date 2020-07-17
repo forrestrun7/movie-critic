@@ -47,6 +47,10 @@
                         html += '<h2 class="s-margin-2"><small>' + comments[i].user_nickname + '</small></h2>' +  '<hr>' +  '<h5>' + comments[i].comment + '</h5>';
                     }
                     document.getElementById("wordArea").innerHTML = html;
+                }else{
+                    var html = "";
+                    html += '<h2 class="s-margin-2"><small>暂无评论</small></h2>';
+                    document.getElementById("wordArea").innerHTML = html;
                 }
             },
             error : function(result) {
@@ -72,6 +76,7 @@
                 alert('服务器异常');
             }
         });
+        initComments();
     }
 </script>
 </html>

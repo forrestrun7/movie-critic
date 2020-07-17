@@ -43,7 +43,7 @@ public class CommentController {
             //System.out.println(JSONArray.toJSONString(comments));
             return new Response("0", JSONArray.toJSONString(comments));
         }else{
-            return new Response("0", "没有留言");
+            return new Response("1", "没有留言");
         }
     }
 }
