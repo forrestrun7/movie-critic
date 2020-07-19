@@ -24,7 +24,7 @@ public class IndexConroller {
     @Autowired
     MovieService movieService;
 
-    @RequestMapping("/index")
+    @RequestMapping("/")
     public String index(HttpServletRequest request, Model model){
         Cookie[] cookies = request.getCookies();
         if (cookies != null){
@@ -34,18 +34,24 @@ public class IndexConroller {
                     //System.out.println(likes + userid);
                     User u =userMapper.getUserById(userid);
                     model.addAttribute("userid", userid);
-                    // 获取主页展示的电影
-                    Movie[] Index_movie=new Movie[9];
-                    for(int i=0; i<9;i++){
-                        Random random = new Random();
-                        Index_movie[i] = movieService.getMovieById(random.nextInt(248)+1);
-                    }
-                    model.addAttribute("index_movies", Index_movie);
-                    return "index";
                 }
             }
         }
-        return "redirect:/";
+        // 获取主页展示的电影
+        Movie[] Index_movie=new Movie[9];
+        Random random = new Random();
+        HashMap hash = new HashMap();
+        for(int i=0; i<9; i++){
+            int num = random.nextInt(248);
+            if(!hash.containsValue(num)){
+                hash.put(i,num);
+            }
+        }
+        for(int j=0; j<9; j++){
+            Index_movie[j] = movieService.getMovieById((Integer) hash.get(j));
+        }
+        model.addAttribute("index_movies", Index_movie);
+        return "index";
     }
     @GetMapping("/new")
     public String newuser(HttpServletRequest request, Model model){

@@ -23,7 +23,7 @@ public class UserController {
     @Autowired
     UserService userservice;
 
-    @GetMapping("/")
+    @GetMapping("/log")
     public String index() {
         return "login";
     }
