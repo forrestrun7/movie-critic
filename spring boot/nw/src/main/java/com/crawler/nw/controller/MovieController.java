@@ -18,6 +18,7 @@ public class MovieController {
     @Autowired
     MovieMapper movieMapper;
 
+    //电影详情页
     @GetMapping("/movie/{movie_id}")
     public String movieInfo(@PathVariable("movie_id")int movie_id, Model model, HttpServletRequest request){
         Cookie[] cookies = request.getCookies();

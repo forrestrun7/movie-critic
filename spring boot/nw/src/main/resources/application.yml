@@ -1,5 +1,10 @@
 server:
   port: 8080
+  servlet:
+    session:
+      tracking-modes: cookie
+      cookie:
+        http-only: true
 spring:
   application:
     name: nw
@@ -8,5 +13,6 @@ spring:
     password: 123456
     url=: jdbc:mysql://localhost:3306/crawler?serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 
 

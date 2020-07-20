@@ -25,6 +25,7 @@ public class NineblockController {
     @Autowired
     UserService userService;
 
+    //换一换
     @PostMapping("/change")
     public Response change(){
         int moviecount = movieService.getMoviesCount();
@@ -38,6 +39,7 @@ public class NineblockController {
         return response;
     }
 
+    //选择完成后上传喜好
     @PostMapping("/updatelikes")
     public void updatelikes(String likes, int userid){
 //        System.out.println(likes);

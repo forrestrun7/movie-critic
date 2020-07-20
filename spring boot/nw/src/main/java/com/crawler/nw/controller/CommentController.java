@@ -21,6 +21,7 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
+    //上传评论
     @PostMapping(value = "/updatecomment")
     public void setComment(@RequestParam("user_id") int user_id, @RequestParam(value = "user_nickname", required = false) String user_nickname, @RequestParam("movie_id") int movie_id, @RequestParam("comment") String comm){
         Comment comment = new Comment();
@@ -36,6 +37,7 @@ public class CommentController {
         commentService.setComment(comment);
     }
 
+    //拉取评论
     @PostMapping(value = "/getcomment")
     public Response getComment(@RequestParam("movie_id") int movie_id){
         List<Comment> comments = Arrays.asList( commentService.getComments(movie_id));

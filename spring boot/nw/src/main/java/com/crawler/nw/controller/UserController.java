@@ -7,6 +7,7 @@ import com.crawler.nw.mapper.UserMapper;
 import com.crawler.nw.service.UserService;
 import com.sun.deploy.net.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,25 +15,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.HttpResource;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
+@EnableAutoConfiguration
 @Controller
 public class UserController {
     @Autowired
     UserService userservice;
 
-    @GetMapping("/log")
-    public String index() {
-        return "login";
-    }
-
-    @GetMapping("/reg")
-    public String register(){
-        return "register";
-    }
-
+    //登录判定函数
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String index(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model, HttpServletResponse response) {
         User u = userservice.getUserByName(username);
@@ -43,8 +36,9 @@ public class UserController {
                 Cookie login_cookie = new Cookie("userid", (new Integer(u.getUserid())).toString());
                 // 有效期,秒为单位
                 login_cookie.setMaxAge(3600);
+                login_cookie.setPath("/");
                 response.addCookie(login_cookie);
-                session.setAttribute("loginUser",username);
+                //session.setAttribute("loginUser",username);
                 if(u.getLike() == null || "".equals(u.getLike())){
                     return "redirect:/new";
                 }else{
@@ -63,18 +57,35 @@ public class UserController {
         }
     }
 
+    //注册判定函数
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String reg_insert(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
         User u1 = userservice.getUserByName(username);
         if(u1 != null){
             model.addAttribute("msg", "账户已存在,重新输入");
             return "register";
-        }
-        else{
+        }else{
             User u2 = new User(username, password);
             userservice.insertUser(u2);
             return "redirect:/";
         }
     }
 
+    //登出函数
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null){ //获取登录id
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("userid")){
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie); //删除Cookie
+                    //System.out.println("已删除Cookie：userid");
+                    break;
+                }
+            }
+        }
+        return "redirect:/";
+    }
 }

@@ -5,6 +5,7 @@ import com.crawler.nw.bean.User;
 import com.crawler.nw.mapper.MovieMapper;
 import com.crawler.nw.mapper.UserMapper;
 import com.crawler.nw.service.MovieService;
+import com.crawler.nw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,39 +21,55 @@ import java.util.*;
 public class IndexConroller {
 
     @Autowired
-    UserMapper userMapper;
+    UserService userService;
     @Autowired
     MovieService movieService;
 
-    @RequestMapping("/")
+    //跳转登录页
+    @GetMapping("/log")
+    public String index() {
+        return "login";
+    }
+
+    //跳转注册页
+    @GetMapping("/reg")
+    public String register(){
+        return "register";
+    }
+
+    //主页
+    @RequestMapping({"/", "/index"})
     public String index(HttpServletRequest request, Model model){
+        int flag = 0; //0未登录， 1已登录
         Cookie[] cookies = request.getCookies();
-        if (cookies != null){
+        if (cookies != null){ //检测是否登录
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("userid")){
                     int userid = Integer.parseInt(cookie.getValue());
                     //System.out.println(likes + userid);
-                    User u =userMapper.getUserById(userid);
                     model.addAttribute("userid", userid);
+                    flag = 1;
+                    //System.out.println("已登录");
+                    break;
                 }
             }
         }
         // 获取主页展示的电影
-        Movie[] Index_movie=new Movie[9];
-        Random random = new Random();
-        HashMap hash = new HashMap();
-        for(int i=0; i<9; i++){
-            int num = random.nextInt(248);
-            if(!hash.containsValue(num)){
-                hash.put(i,num);
-            }
-        }
-        for(int j=0; j<9; j++){
-            Index_movie[j] = movieService.getMovieById((Integer) hash.get(j));
+        int moviecount = movieService.getMoviesCount();
+        Movie Index_movie[] = new Movie[9];
+        for(int i = 0; i < 9; i++){
+            int random = (int)(Math.random() * (moviecount - 1)) + 1;
+            //System.out.println(random);
+            Index_movie[i] = movieService.getMovieById(random);
         }
         model.addAttribute("index_movies", Index_movie);
-        return "index";
+        if (flag == 1){
+            return "index_logged";
+        }else {
+            return "index";
+        }
     }
+    //新用户
     @GetMapping("/new")
     public String newuser(HttpServletRequest request, Model model){
         Cookie[] cookies = request.getCookies();
