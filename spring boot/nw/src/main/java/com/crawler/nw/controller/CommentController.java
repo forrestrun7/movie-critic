@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,8 +23,8 @@ public class CommentController {
     CommentService commentService;
 
     //上传评论
-    @PostMapping(value = "/updatecomment")
-    public void setComment(@RequestParam("user_id") int user_id, @RequestParam(value = "user_nickname", required = false) String user_nickname, @RequestParam("movie_id") int movie_id, @RequestParam("comment") String comm){
+    @RequestMapping(value = "/updatecomment")
+    public void setComment(@RequestParam(value = "user_id") int user_id, @RequestParam(value = "user_nickname", required = false) String user_nickname, @RequestParam(value = "movie_id") int movie_id, @RequestParam(value = "comment") String comm){
         Comment comment = new Comment();
         comment.setMovie_id(movie_id);
         comment.setUser_id(user_id);
@@ -38,8 +39,8 @@ public class CommentController {
     }
 
     //拉取评论
-    @PostMapping(value = "/getcomment")
-    public Response getComment(@RequestParam("movie_id") int movie_id){
+    @RequestMapping(value = "/getcomment")
+    public Response getComment(@RequestParam(value = "movie_id") int movie_id){
         List<Comment> comments = Arrays.asList( commentService.getComments(movie_id));
         if(comments.size()>0){
             //System.out.println(JSONArray.toJSONString(comments));

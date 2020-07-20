@@ -21,19 +21,28 @@ public class MovieController {
     //电影详情页
     @GetMapping("/movie/{movie_id}")
     public String movieInfo(@PathVariable("movie_id")int movie_id, Model model, HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("userid")){
-                    int userid = Integer.parseInt(cookie.getValue());
-                    Movie movie = movieMapper.getMovieById(movie_id);
-                    model.addAttribute("movie_id", movie_id);
-                    model.addAttribute("userid", userid);
-                    model.addAttribute("movie", movie);
-                    return "movie_info";
-                }
-            }
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null){
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals("userid")){
+//                    int userid = Integer.parseInt(cookie.getValue());
+//                    Movie movie = movieMapper.getMovieById(movie_id);
+//                    model.addAttribute("movie_id", movie_id);
+//                    model.addAttribute("userid", userid);
+//                    model.addAttribute("movie", movie);
+//                    return "movie_info";
+//                }
+//            }
+//        }
+        Object object = request.getSession().getAttribute("userid");
+        if(object != null){
+            Movie movie = movieMapper.getMovieById(movie_id);
+            model.addAttribute("movie_id", movie_id);
+            model.addAttribute("userid", object);
+            model.addAttribute("movie", movie);
+            return "movie_info";
+        }else{
+            return "redirect:/log";
         }
-        return "redirect:/";
     }
 }

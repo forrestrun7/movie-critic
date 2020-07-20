@@ -26,25 +26,24 @@ public class UserController {
     UserService userservice;
 
     //登录判定函数
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String index(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model, HttpServletResponse response) {
+    @RequestMapping("/login")
+    public String index(@RequestParam(value = "username", required = false) String username, @RequestParam(value = "password", required = false) String password, HttpSession session, Model model, HttpServletResponse response) {
         User u = userservice.getUserByName(username);
         //System.out.println(u.getUsername());
         try {
             if(u.getPassword().equals(password)){
                 // 创建Cookie
-                Cookie login_cookie = new Cookie("userid", (new Integer(u.getUserid())).toString());
-                // 有效期,秒为单位
-                login_cookie.setMaxAge(3600);
-                login_cookie.setPath("/");
-                response.addCookie(login_cookie);
+//                Cookie login_cookie = new Cookie("userid", (new Integer(u.getUserid())).toString());
+//                // 有效期,秒为单位
+//                login_cookie.setMaxAge(3600);
+//                login_cookie.setPath("/");
+//                response.addCookie(login_cookie);
                 //session.setAttribute("loginUser",username);
+                session.setAttribute("userid", (new Integer(u.getUserid())).toString());
+                session.setMaxInactiveInterval(30 * 60);
                 if(u.getLike() == null || "".equals(u.getLike())){
                     return "redirect:/new";
                 }else{
-//                    Cookie like_cookie = new Cookie("likes", u.getLike());
-//                    like_cookie.setMaxAge(3600);
-//                    response.addCookie(like_cookie);
                     return "redirect:/index";
                 }
             }else{
@@ -58,8 +57,8 @@ public class UserController {
     }
 
     //注册判定函数
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String reg_insert(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
+    @RequestMapping("/register")
+    public String reg_insert(@RequestParam(value = "username", required = false) String username, @RequestParam(value = "password", required = false) String password, Model model) {
         User u1 = userservice.getUserByName(username);
         if(u1 != null){
             model.addAttribute("msg", "账户已存在,重新输入");
@@ -67,25 +66,26 @@ public class UserController {
         }else{
             User u2 = new User(username, password);
             userservice.insertUser(u2);
-            return "redirect:/";
+            return "redirect:/new";
         }
     }
 
     //登出函数
     @RequestMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response){
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null){ //获取登录id
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("userid")){
-                    cookie.setMaxAge(0);
-                    cookie.setPath("/");
-                    response.addCookie(cookie); //删除Cookie
-                    //System.out.println("已删除Cookie：userid");
-                    break;
-                }
-            }
-        }
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null){ //获取登录id
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals("userid")){
+//                    cookie.setMaxAge(0);
+//                    cookie.setPath("/");
+//                    response.addCookie(cookie); //删除Cookie
+//                    //System.out.println("已删除Cookie：userid");
+//                    break;
+//                }
+//            }
+//        }
+        request.getSession().invalidate();
         return "redirect:/";
     }
 }

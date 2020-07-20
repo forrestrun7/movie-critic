@@ -25,34 +25,31 @@ public class IndexConroller {
     @Autowired
     MovieService movieService;
 
-    //跳转登录页
-    @GetMapping("/log")
-    public String index() {
-        return "login";
-    }
-
-    //跳转注册页
-    @GetMapping("/reg")
-    public String register(){
-        return "register";
-    }
-
     //主页
     @RequestMapping({"/", "/index"})
     public String index(HttpServletRequest request, Model model){
-        int flag = 0; //0未登录， 1已登录
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null){ //检测是否登录
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("userid")){
-                    int userid = Integer.parseInt(cookie.getValue());
-                    //System.out.println(likes + userid);
-                    model.addAttribute("userid", userid);
-                    flag = 1;
-                    //System.out.println("已登录");
-                    break;
-                }
-            }
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null){ //检测是否登录
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals("userid")){
+//                    int userid = Integer.parseInt(cookie.getValue());
+//                    //System.out.println(likes + userid);
+//                    model.addAttribute("userid", userid);
+//                    //System.out.println("已登录");
+//                    break;
+//                }
+//            }
+//        }
+        //默认主页
+        model.addAttribute("title", "主页 | 未登录");
+        model.addAttribute("index_info", "<a href=\"/log\" class=\"btn btn-primary my-2\">登录</a>\n" + "<a href=\"/reg\" class=\"btn btn-secondary my-2\">注册</a>");
+        Object object = request.getSession().getAttribute("userid");
+        System.out.println(object);
+        if(object != null){
+            //model.addAttribute("userid", object);
+            //登录后的主页
+            model.addAttribute("title", "主页 | " + object);
+            model.addAttribute("index_info", "<p>id：" + object + "</p>\n" + "<a href=\"/logout\" class=\"btn btn-secondary my-2\">登出</a>");
         }
         // 获取主页展示的电影
         int moviecount = movieService.getMoviesCount();
@@ -63,33 +60,44 @@ public class IndexConroller {
             Index_movie[i] = movieService.getMovieById(random);
         }
         model.addAttribute("index_movies", Index_movie);
-        if (flag == 1){
-            return "index_logged";
-        }else {
-            return "index";
-        }
+        return "index";
     }
     //新用户
     @GetMapping("/new")
     public String newuser(HttpServletRequest request, Model model){
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("userid")){
-                    int userid = Integer.parseInt(cookie.getValue());
-                    int moviecount = movieService.getMoviesCount();
-                    Movie movies[] = new Movie[9];
-                    for(int i = 0; i < 9; i++){
-                        int random = (int)(Math.random() * (moviecount - 1)) + 1;
-                        //System.out.println(random);
-                        movies[i] = movieService.getMovieById(random);
-                    }
-                    model.addAttribute("userid", userid);
-                    model.addAttribute("movies", movies);
-                    return "new";
-                }
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null){
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals("userid")){
+//                    int userid = Integer.parseInt(cookie.getValue());
+//                    int moviecount = movieService.getMoviesCount();
+//                    Movie movies[] = new Movie[9];
+//                    for(int i = 0; i < 9; i++){
+//                        int random = (int)(Math.random() * (moviecount - 1)) + 1;
+//                        //System.out.println(random);
+//                        movies[i] = movieService.getMovieById(random);
+//                    }
+//                    model.addAttribute("userid", userid);
+//                    model.addAttribute("movies", movies);
+//                    return "new";
+//                }
+//            }
+//        }
+        Object object = request.getSession().getAttribute("userid");
+        if(object != null){
+            int userid = (int)object;
+            int moviecount = movieService.getMoviesCount();
+            Movie movies[] = new Movie[9];
+            for(int i = 0; i < 9; i++){
+                int random = (int)(Math.random() * (moviecount - 1)) + 1;
+                //System.out.println(random);
+                movies[i] = movieService.getMovieById(random);
             }
+            model.addAttribute("userid", userid);
+            model.addAttribute("movies", movies);
+            return "new";
+        }else{
+            return "redirect:/";
         }
-        return "redirect:/";
     }
 }
