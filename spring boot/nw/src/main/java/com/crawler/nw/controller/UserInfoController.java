@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class UserInfoController {
 
@@ -17,11 +19,17 @@ public class UserInfoController {
     UserMapper userMapper;
 
     @RequestMapping("/user/{userid}")
-    public String getuserinfo(@PathVariable("userid") int id, Model model){
-        User curruct_user = userMapper.getUserById(id);
-        model.addAttribute("userid", id);
-        model.addAttribute("username", curruct_user.getUsername());
-        model.addAttribute("userlikes", curruct_user.getLike());
-        return "user_info";
+    public String getuserinfo(@PathVariable("userid") int id, Model model, HttpServletRequest request){
+
+        Object object = request.getSession().getAttribute("userid");
+        if(object != null){
+            User curruct_user = userMapper.getUserById(id);
+            model.addAttribute("userid", id);
+            model.addAttribute("username", curruct_user.getUsername());
+            model.addAttribute("userlikes", curruct_user.getLike());
+            return "user_info";
+        }else{
+            return "redirect:/log";
+        }
     }
 }
