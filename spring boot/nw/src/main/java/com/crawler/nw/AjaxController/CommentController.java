@@ -1,4 +1,4 @@
-package com.crawler.nw.controller;
+package com.crawler.nw.AjaxController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.crawler.nw.bean.Comment;

@@ -6,6 +6,7 @@
 </head>
 <body>
 <div>
+    <img th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}" />
     <div>电影名：[[${movie.getMovie_name()}]]</div>
     <div>别名：[[${movie.getMovie_anothername()}]]</div>
     <div>导演：[[${movie.getMovie_director()}]]</div>
