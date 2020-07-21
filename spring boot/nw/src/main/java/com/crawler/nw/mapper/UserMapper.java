@@ -19,4 +19,7 @@ public interface UserMapper {
 
     @Update("update User set Userlike=#{Userlike} where Userid=#{Userid}")
     public int updateUserLike(User user);
+
+    @Update("update User set Userlike=#{Userlike}, Username=#{Username} where Userid=#{Userid}")
+    public int updateUserinfo(User user);
 }

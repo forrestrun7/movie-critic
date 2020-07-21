@@ -44,12 +44,13 @@ public class IndexConroller {
         model.addAttribute("title", "主页 | 未登录");
         model.addAttribute("index_info", "<a href=\"/log\" class=\"btn btn-primary my-2\">登录</a>\n" + "<a href=\"/reg\" class=\"btn btn-secondary my-2\">注册</a>");
         Object object = request.getSession().getAttribute("userid");
-        System.out.println(object);
+        //System.out.println(object);
         if(object != null){
             //model.addAttribute("userid", object);
             //登录后的主页
             model.addAttribute("title", "主页 | " + object);
-            model.addAttribute("index_info", "<p>id：" + object + "</p>\n" + "<a href=\"/logout\" class=\"btn btn-secondary my-2\">登出</a>");
+            model.addAttribute("index_info", "<a href=\"/user/" + object + "\" class=\"btn btn-secondary my-2\">id：" + object + "</a>\n" + "<a href=\"/logout\" class=\"btn btn-secondary my-2\">登出</a>");
+            //System.out.println(model.getAttribute("index_info"));
         }
         // 获取主页展示的电影
         int moviecount = movieService.getMoviesCount();

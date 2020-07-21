@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>个人信息</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/asserts/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/asserts/css/signin.css}" rel="stylesheet">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+    <style>
+        .dialog{
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="text-center">
+<div>
+    <div>ID：[[${userid}]]</div>
+    <div>Name：[[${username}]]</div>
+    <div>Likes：[[${userlikes}]]</div>
+</div>
+<button onclick="edit()">编辑</button>
+<div class="dialog">
+    <input id="userid" readonly="readonly" th:value="${userid}"/>
+    <input id="username" th:value="${username}"/>
+    <input id="userlikes" th:value="${userlikes}"/>
+</div>
+<button onclick="commit()">提交</button>
+</body>
+
+<script th:src="@{/asserts/js/jquery.js}"></script>
+<script>
+    function edit(){
+        $(".dialog").show(100);
+    }
+    function commit() {
+        var userid = $("#userid").val();
+        var username = $("#username").val();
+        var userlikes = $("#userlikes").val();
+        $.ajax({
+            async : false,
+            type : 'POST',
+            url : "http://localhost:8080/edit_userinfo",
+            data : {"userid": userid, "username": username, "userlikes": userlikes},
+            success : function(result) {
+                alert("提交成功");
+            },
+            error : function(result) {
+                alert('服务器异常');
+            }
+        });
+    }
+</script>
+</html>
