@@ -35,14 +35,10 @@ public class MovieController {
 //            }
 //        }
         Object object = request.getSession().getAttribute("userid");
-        if(object != null){
             Movie movie = movieMapper.getMovieById(movie_id);
             model.addAttribute("movie_id", movie_id);
             model.addAttribute("userid", object);
             model.addAttribute("movie", movie);
             return "movie_info";
-        }else{
-            return "redirect:/log";
-        }
     }
 }

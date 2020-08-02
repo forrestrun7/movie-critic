@@ -85,8 +85,7 @@ public class IndexConroller {
 //            }
 //        }
         Object object = request.getSession().getAttribute("userid");
-        if(object != null){
-            int userid = (int)object;
+            int userid = Integer.parseInt(object.toString());
             int moviecount = movieService.getMoviesCount();
             Movie movies[] = new Movie[9];
             for(int i = 0; i < 9; i++){
@@ -97,8 +96,5 @@ public class IndexConroller {
             model.addAttribute("userid", userid);
             model.addAttribute("movies", movies);
             return "new";
-        }else{
-            return "redirect:/";
-        }
     }
 }
