@@ -12,4 +12,6 @@ public interface MovieService {
 
     public int deleteMovieByName(String Movie_name);
 
+    public Movie[] SearchMovieByName(String Movie_name);
+
 }

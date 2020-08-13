@@ -1,10 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.0.1">
+    <title>分类</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/carousel/">
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/asserts/css/bootstrap.min.css}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link th:href="@{/asserts/css/carousel.css}" rel="stylesheet">
 </head>
 <body>
-$END$
-</body>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/#">主页</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/class">分类 <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0"  action="" th:action="@{/search}" method="post">
+                <input class="form-control mr-sm-2" name="Movie_name" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+<main role="main">
+
+
+
+    <div class="container marketing">
+
+        <div class="row" th:switch="${movie_type}">
+            <div th:case="fiction_movie"> <h1>科幻</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${fiction_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <div th:case="comedy_movie"> <h1>喜剧</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${comedy_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <div th:case="cartoon_movie"> <h1>动画</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${cartoon_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <div th:case="action_movie"> <h1>动作</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${action_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>>
+            </div>
+            <div th:case="drama_movie"> <h1>剧情</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${drama_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <div th:case="fantasy_movie"> <h1>奇幻</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${fantasy_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+            <div th:case="crime_movie"> <h1>犯罪</h1>
+                <div class="row">
+                    <div class="col-lg-4" th:each="movie:${crime_movie}">
+                        <img  class="movie-img" height="367" width="270" th:src="@{'../movie_poster/' + ${movie.getMovie_name()} + '.jpg'}"/>
+                        <p th:text="${movie.getMovie_name()}">Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+                        <p><a class="btn btn-secondary" th:href="@{/movie/{movie_id}(movie_id=${movie.getMovie_id()})}" role="button">View details &raquo;</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>>
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer class="container">
+        <p class="float-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2017-2020 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+    </footer>
+</main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="../assets/dist/js/bootstrap.bundle.js"></script></body>
 </html>

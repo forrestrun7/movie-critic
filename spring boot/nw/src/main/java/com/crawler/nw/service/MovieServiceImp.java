@@ -6,6 +6,9 @@ import com.crawler.nw.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class MovieServiceImp implements MovieService{
     @Autowired
@@ -34,10 +37,15 @@ public class MovieServiceImp implements MovieService{
         int count = movieMapper.getMoviesCount();
         return count;
     }
-
     @Override
     public int deleteMovieByName(String Movie_name) {
         movieMapper.deleteMovieByName(Movie_name);
         return 0;
+    }
+
+    @Override
+    public Movie[] SearchMovieByName(String Movie_name){
+        Movie[] movie = movieMapper.SearchMovieByName(Movie_name);
+        return movie;
     }
 }

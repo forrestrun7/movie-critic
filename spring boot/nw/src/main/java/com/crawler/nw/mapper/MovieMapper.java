@@ -10,6 +10,10 @@ public interface MovieMapper {
     @Select("select * from movie where Movie_id=#{Movie_id}")
     public Movie getMovieById(int Movie_id);
 
+    //模糊查询
+    @Select("select * from movie where Movie_name like concat('%',#{Movie_name},'%')")
+    public Movie[] SearchMovieByName(String Movie_name);
+
     @Select("select * from movie")
     public Movie[] getMovies();
 

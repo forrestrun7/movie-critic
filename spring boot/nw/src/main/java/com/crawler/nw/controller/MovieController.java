@@ -2,6 +2,7 @@ package com.crawler.nw.controller;
 
 import com.crawler.nw.bean.Movie;
 import com.crawler.nw.mapper.MovieMapper;
+import com.crawler.nw.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class MovieController {
     @Autowired
-    MovieMapper movieMapper;
+    MovieService movieService;
 
     //电影详情页
     @GetMapping("/movie/{movie_id}")
@@ -35,7 +36,7 @@ public class MovieController {
 //            }
 //        }
         Object object = request.getSession().getAttribute("userid");
-            Movie movie = movieMapper.getMovieById(movie_id);
+            Movie movie = movieService.getMovieById(movie_id);
             model.addAttribute("movie_id", movie_id);
             model.addAttribute("userid", object);
             model.addAttribute("movie", movie);

@@ -54,11 +54,17 @@ public class IndexConroller {
         }
         // 获取主页展示的电影
         int moviecount = movieService.getMoviesCount();
+        List<Integer> list = new ArrayList<Integer>();
         Movie Index_movie[] = new Movie[9];
-        for(int i = 0; i < 9; i++){
+        while(list.size()!=9){
             int random = (int)(Math.random() * (moviecount - 1)) + 1;
+            if(!list.contains(random)) {
+                list.add(random);
+            }
+        }
+        for(int i = 0; i < 9; i++){
             //System.out.println(random);
-            Index_movie[i] = movieService.getMovieById(random);
+            Index_movie[i] = movieService.getMovieById(list.get(i));
         }
         model.addAttribute("index_movies", Index_movie);
         return "index";
